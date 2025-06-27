@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Chat LED Controller</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    input { width: 100%; padding: 12px; margin: 8px 0; }
+    button { padding: 12px; }
+  </style>
+</head>
+<body>
+  <h1>💡 ChatGPT LED Control</h1>
+  <input id="message" placeholder="Say something like 'turn on the light'" />
+  <button onclick="sendMessage()">Send</button>
+  <p id="response"></p>
+
+  <script>
+    async function sendMessage() {
+      const msg = document.getElementById('message').value;
+      const res = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      document.getElementById('response').innerText = data.status;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 LED Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .on { background-color: #4CAF50; }
+    .off { background-color: #f44336; }
+    #status { margin-top: 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>LED Control Test</h1>
+  <button class="on" onclick="sendCommand('on')">Turn ON</button>
+  <button class="off" onclick="sendCommand('off')">Turn OFF</button>
+  <p id="status">Waiting for input...</p>
+
+  <script>
+    // Replace with your ESP32's IP address shown in Serial Monitor
+    const ESP32_IP = 'http://192.168.3.118';
+
+    async function sendCommand(state) {
+      try {
+        const res = await fetch(`${ESP32_IP}/led/${state}`);
+        const text = await res.text();
+        document.getElementById('status').innerText = text;
+      } catch (err) {
+        document.getElementById('status').innerText = 'Error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

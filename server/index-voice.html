@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Chat LED Controller</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; }
+    #response { margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🎙️ Voice-Controlled LED</h1>
+  <input id="message" placeholder="Say something like 'turn on the light'" />
+  <button onclick="sendMessage()">Send</button>
+  <button onclick="startVoice()">🎤 Speak</button>
+  <p id="response">Status: Ready</p>
+
+  <script>
+    async function sendMessage() {
+      const msg = document.getElementById('message').value;
+      const res = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      document.getElementById('response').innerText = data.status;
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        document.getElementById('response').innerText = 'Listening...';
+      };
+
+      recognition.onerror = (e) => {
+        document.getElementById('response').innerText = 'Voice error: ' + e.error;
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('message').value = transcript;
+        sendMessage();
+      };
+
+      recognition.start();
+    }
+  </script>
+</body>
+</html>
